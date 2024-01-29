@@ -1,0 +1,78 @@
+    function numberToWords($number) {
+        $number = abs($number);
+        $number = (string) $number;
+        // dd($number);
+
+        $units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+        $teens = ['', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        $tens = ['', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        $thousands = ['', 'thousand', 'million', 'billion', 'trillion'];
+
+        $result = '';
+
+        $numberLength = strlen($number);
+        $thousandIndex = 0;
+
+        for ($i = 0; $i < $numberLength; $i++) {
+            $digit = (int) $number[$i];
+            $position = $numberLength - $i - 1;
+
+            // dump($position);
+            // if ($position % 3 == 0 && $digit > 0) {
+            //     $result .= $units[$digit] . " hundred\n";
+            //     $i++;
+            // }else{
+            //     if ($digit != 0) {
+            //         $i++;
+            //     }else{
+
+            //     }
+            // }
+            // dump($digit ."|". $position);
+            if (($position / 3) < 1) {
+                if ($position % 2 == 0 && $digit > 0) {
+                    $result .= $units[$digit]. ' hundred ';
+                }else{
+                    if ($digit >= 1) {
+                        $result .= $tens[$digit] . ' ';
+                    }else{
+                        $result .= $teens[$number[$i++]] . ' ';
+                        $i--;
+                    }
+                }
+            }else{
+                if ($digit > 0 && $position % 3 != 0 && ($position - 2) % 3 == 0) {
+                    // dump($digit . "|" . ($position % 2));
+                    $result .= $units[$digit]. ' hundred';
+                }else{
+                    if ($position % 2 == 0 && $digit > 0 && $position % 3 == 0)  {
+                        $result .= $units[$digit];
+                    }else{
+                        if ($digit > 1 && $position % 3 != 0) {
+                            $result .= $tens[$digit];
+                        }else if($digit == 1){
+                            $result .= $teens[$number[$i++]];
+                            $i--;
+                        }else{
+                            $result .= $units[$digit];
+                        }
+                    }
+                }
+            }
+
+            $result .= ' ';
+
+            if (floor(($position-1) / 3) != floor($position/3)) {
+                $result .= $thousands[($position / 3)] . ' ';
+            }
+        }
+        return trim($result);
+    }
+
+    function numberToWordsCurrency($amount, $currency = 'Rupiah') {
+        $amount = number_format($amount, 0, '.', '');
+
+        $words = numberToWords($amount);
+        $result = ucfirst($words) . ' ' . $currency;
+        return $result;
+    }
